@@ -29,7 +29,7 @@ A shortcut that:
 - Add it
 - Enter your API URL:
   ```
-  https://YOUR-APP.vercel.app/api/wallpaper
+  https://yearly-do65.vercel.app/api/wallpaper
   ```
   
 ### Action 2: Set Wallpaper
@@ -115,7 +115,7 @@ Change wallpaper style by modifying the URL:
 
 | URL | Effect |
 |-----|--------|
-| `/api/wallpaper` | Default (iPhone 13 Pro Max) |
-| `/api/wallpaper?device=iphone15promax` | iPhone 15 Pro Max size |
-| `/api/wallpaper?device=macbook14` | MacBook Pro 14" |
-| `/api/wallpaper?bg=#000000` | Pure black background |
+| `https://yearly-do65.vercel.app/api/wallpaper` | Default (iPhone 13 Pro Max) |
+| `https://yearly-do65.vercel.app/api/wallpaper?device=iphone15promax` | iPhone 15 Pro Max size |
+| `https://yearly-do65.vercel.app/api/wallpaper?device=macbook14` | MacBook Pro 14" |
+| `https://yearly-do65.vercel.app/api/wallpaper?bg=#000000` | Pure black background |
