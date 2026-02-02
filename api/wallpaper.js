@@ -67,6 +67,9 @@ function generateWallpaper(deviceId = 'iphone13promax', bgColor = '#1a1a1a') {
     const currentDayOfMonth = phoenixDate.getDate();
     const totalDays = 365;
     const daysLeft = totalDays - currentDayOfYear;
+    const daysInMonth = months[currentMonth].days;
+    const daysLeftInMonth = daysInMonth - currentDayOfMonth;
+    const monthName = months[currentMonth].name;
     const percentComplete = Math.round((currentDayOfYear / totalDays) * 100);
 
     // Draw background
@@ -149,7 +152,7 @@ function generateWallpaper(deviceId = 'iphone13promax', bgColor = '#1a1a1a') {
     const footerY = isLaptop ? canvas.height - 80 * baseScale : canvas.height - 100 * baseScale;
     ctx.font = `600 ${26 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
     ctx.fillStyle = '#ff6b35';
-    ctx.fillText(`${daysLeft}d left · ${percentComplete}%`, canvas.width / 2, footerY);
+    ctx.fillText(`${daysLeft}d left · ${daysLeftInMonth}d in ${monthName} · ${percentComplete}%`, canvas.width / 2, footerY);
 
     return canvas.toBuffer('image/png');
 }

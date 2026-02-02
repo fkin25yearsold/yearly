@@ -263,6 +263,7 @@
 
     <div class="controls">
         <button class="btn btn-primary" onclick="downloadWallpaper()">⬇️ Download Wallpaper</button>
+        <a href="Year_Tracker_Wallpaper.shortcut" download class="btn btn-secondary">📲 Download iOS Shortcut</a>
     </div>
 
     <div class="info-box">
@@ -366,6 +367,9 @@
             const currentDayOfMonth = phoenixDate.getDate();
             const totalDays = 365;
             const daysLeft = totalDays - currentDayOfYear;
+            const daysInMonth = months[currentMonth].days;
+            const daysLeftInMonth = daysInMonth - currentDayOfMonth;
+            const monthName = months[currentMonth].name;
             const percentComplete = Math.round((currentDayOfYear / totalDays) * 100);
 
             // Draw background
@@ -466,7 +470,7 @@
             const footerY = isLaptop ? canvas.height - 80 * baseScale : canvas.height - 100 * baseScale;
             ctx.font = `600 ${26 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
             ctx.fillStyle = '#ff6b35';
-            ctx.fillText(`${daysLeft}d left · ${percentComplete}%`, canvas.width / 2, footerY);
+            ctx.fillText(`${daysLeft}d left · ${daysLeftInMonth}d in ${monthName} · ${percentComplete}%`, canvas.width / 2, footerY);
 
             updateCurrentDateDisplay();
         }
