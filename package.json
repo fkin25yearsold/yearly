@@ -1,0 +1,13 @@
+{
+    "name": "year-tracker-wallpaper",
+    "version": "1.0.0",
+    "description": "Auto-updating year tracker wallpaper generator with REST API for iOS Shortcuts",
+    "scripts": {
+        "start": "npx serve .",
+        "dev": "vercel dev",
+        "build": "echo 'No build required'"
+    },
+    "dependencies": {
+        "@napi-rs/canvas": "^0.1.44"
+    }
+}

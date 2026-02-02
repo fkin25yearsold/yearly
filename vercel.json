@@ -1,0 +1,14 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/wallpaper",
+            "destination": "/api/wallpaper"
+        }
+    ],
+    "functions": {
+        "api/wallpaper.js": {
+            "memory": 1024,
+            "maxDuration": 10
+        }
+    }
+}

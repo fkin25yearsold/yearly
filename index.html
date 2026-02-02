@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year Tracker Wallpaper Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 10px;
+        }
+
+        .preview-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 60vh;
+        }
+
+        #wallpaperCanvas {
+            display: block;
+            max-width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+        }
+
+        .device-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 700px;
+        }
+
+        .device-btn {
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .device-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .device-btn.active {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .customization {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .upload-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #bgUpload {
+            display: none;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-picker-wrapper label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        #bgColor {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .info-box {
+            margin-top: 40px;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .info-box h3 {
+            color: #ff6b35;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .info-box ol {
+            color: rgba(255, 255, 255, 0.7);
+            padding-left: 20px;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .info-box code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .current-date {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 10px;
+            color: #ff6b35;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📅 Year Tracker Wallpaper</h1>
+    <p class="subtitle">Auto-updating daily wallpaper for 2026 • Phoenix Timezone (MST)</p>
+
+    <div class="current-date" id="currentDate"></div>
+
+    <p class="section-title">📱 iPhone</p>
+    <div class="device-selector">
+        <button class="device-btn" onclick="setDevice('iphone15promax')">iPhone 15 Pro Max</button>
+        <button class="device-btn" onclick="setDevice('iphone15pro')">iPhone 15 Pro</button>
+        <button class="device-btn active" onclick="setDevice('iphone13promax')">iPhone 13 Pro Max</button>
+        <button class="device-btn" onclick="setDevice('iphone14')">iPhone 14</button>
+        <button class="device-btn" onclick="setDevice('iphonese')">iPhone SE</button>
+    </div>
+
+    <p class="section-title">💻 MacBook</p>
+    <div class="device-selector">
+        <button class="device-btn" onclick="setDevice('macbook14')">MacBook Pro 14"</button>
+        <button class="device-btn" onclick="setDevice('macbook16')">MacBook Pro 16"</button>
+        <button class="device-btn" onclick="setDevice('macbookair13')">MacBook Air 13"</button>
+    </div>
+
+    <div class="customization">
+        <label class="upload-btn" for="bgUpload">
+            🖼️ Upload Custom Background
+            <input type="file" id="bgUpload" accept="image/*">
+        </label>
+        <div class="color-picker-wrapper">
+            <label>Or pick color:</label>
+            <input type="color" id="bgColor" value="#1a1a1a">
+        </div>
+        <button class="btn btn-secondary" onclick="resetBackground()">↩️ Reset to Dark</button>
+    </div>
+
+    <div class="preview-container" style="margin-top: 25px;">
+        <canvas id="wallpaperCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-primary" onclick="downloadWallpaper()">⬇️ Download Wallpaper</button>
+    </div>
+
+    <div class="info-box">
+        <h3>🔄 iOS Shortcut Setup (Auto-Update Daily)</h3>
+        <ol>
+            <li><strong>Download</strong> the wallpaper now using the button above</li>
+            <li>Open <strong>Shortcuts</strong> app on your iPhone</li>
+            <li>Create a new shortcut with these actions:
+                <ul style="list-style: disc; margin: 8px 0 8px 20px;">
+                    <li><code>Get Contents of URL</code> → paste your hosted page URL + <code>/api/wallpaper.png</code>
+                    </li>
+                    <li><code>Set Wallpaper</code> → choose Lock Screen, Home Screen, or Both</li>
+                </ul>
+            </li>
+            <li>Go to <strong>Automation</strong> tab → Create Personal Automation</li>
+            <li>Choose <strong>Time of Day</strong> → set to <strong>12:00 AM</strong> daily</li>
+            <li>Add your shortcut → Turn OFF "Ask Before Running"</li>
+        </ol>
+        <p style="margin-top: 15px; color: rgba(255,255,255,0.5); font-size: 13px;">
+            💡 For auto-update to work, you'll need to host this page on a web server (like Vercel, Netlify, or your own
+            server).
+        </p>
+    </div>
+
+    <script>
+        // Device configurations (width x height in pixels)
+        const devices = {
+            // iPhones
+            'iphone15promax': { width: 1290, height: 2796, name: 'iPhone 15 Pro Max', type: 'phone' },
+            'iphone15pro': { width: 1179, height: 2556, name: 'iPhone 15 Pro', type: 'phone' },
+            'iphone13promax': { width: 1284, height: 2778, name: 'iPhone 13 Pro Max', type: 'phone' },
+            'iphone14': { width: 1170, height: 2532, name: 'iPhone 14', type: 'phone' },
+            'iphonese': { width: 750, height: 1334, name: 'iPhone SE', type: 'phone' },
+            // MacBooks
+            'macbook14': { width: 3024, height: 1964, name: 'MacBook Pro 14"', type: 'laptop' },
+            'macbook16': { width: 3456, height: 2234, name: 'MacBook Pro 16"', type: 'laptop' },
+            'macbookair13': { width: 2560, height: 1664, name: 'MacBook Air 13"', type: 'laptop' }
+        };
+
+        let currentDevice = 'iphone13promax';
+        let customBackground = null;
+        let bgColor = '#1a1a1a';
+
+        const canvas = document.getElementById('wallpaperCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Month configurations for 2026
+        const months = [
+            { name: 'JAN', days: 31 },
+            { name: 'FEB', days: 28 }, // 2026 is not a leap year
+            { name: 'MAR', days: 31 },
+            { name: 'APR', days: 30 },
+            { name: 'MAY', days: 31 },
+            { name: 'JUN', days: 30 },
+            { name: 'JUL', days: 31 },
+            { name: 'AUG', days: 31 },
+            { name: 'SEP', days: 30 },
+            { name: 'OCT', days: 31 },
+            { name: 'NOV', days: 30 },
+            { name: 'DEC', days: 31 }
+        ];
+
+        function getPhoenixDate() {
+            // Phoenix is MST (UTC-7) and doesn't observe DST
+            const now = new Date();
+            const phoenixOffset = -7 * 60; // -7 hours in minutes
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utc + (phoenixOffset * 60000));
+        }
+
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        function updateCurrentDateDisplay() {
+            const phoenixDate = getPhoenixDate();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = phoenixDate.toLocaleDateString('en-US', options);
+            const dayOfYear = getDayOfYear(phoenixDate);
+            document.getElementById('currentDate').textContent = `📍 Phoenix Time: ${dateStr} (Day ${dayOfYear} of 365)`;
+        }
+
+        function setDevice(deviceId) {
+            currentDevice = deviceId;
+            document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            generateWallpaper();
+        }
+
+        function generateWallpaper() {
+            const device = devices[currentDevice];
+            canvas.width = device.width;
+            canvas.height = device.height;
+
+            const phoenixDate = getPhoenixDate();
+            const currentDayOfYear = getDayOfYear(phoenixDate);
+            const currentMonth = phoenixDate.getMonth();
+            const currentDayOfMonth = phoenixDate.getDate();
+            const totalDays = 365;
+            const daysLeft = totalDays - currentDayOfYear;
+            const percentComplete = Math.round((currentDayOfYear / totalDays) * 100);
+
+            // Draw background
+            if (customBackground) {
+                ctx.drawImage(customBackground, 0, 0, canvas.width, canvas.height);
+                // Add dark overlay for readability
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Calendar layout configuration based on device type
+            const isLaptop = device.type === 'laptop';
+            const baseScale = isLaptop ? canvas.height / 1964 : canvas.width / 1284;
+
+            const dotSize = (isLaptop ? 24 : 30) * baseScale;
+            const dotGap = (isLaptop ? 6 : 8) * baseScale;
+            const monthGapX = (isLaptop ? 80 : 70) * baseScale;  // Horizontal gap between months
+            const monthGapY = (isLaptop ? 140 : 280) * baseScale; // Increased vertical gap between rows
+            const cols = 7; // Days per row in each month grid
+
+            // Calculate total grid dimensions
+            const monthWidth = (cols * dotSize) + ((cols - 1) * dotGap);
+            const monthsPerRow = isLaptop ? 6 : 3;
+            const numRows = isLaptop ? 2 : 4;
+
+            // Calculate month height (label + 5 rows of dots for max 31 days)
+            const maxDotRows = 5;
+            const monthLabelHeight = 35 * baseScale;
+            const monthHeight = monthLabelHeight + (maxDotRows * dotSize) + ((maxDotRows - 1) * dotGap);
+
+            // Calculate total grid size
+            const totalGridWidth = (monthWidth * monthsPerRow) + (monthGapX * (monthsPerRow - 1));
+            const totalGridHeight = (monthHeight * numRows) + (monthGapY * (numRows - 1));
+
+            // Center horizontally, start first row below center of screen
+            const startX = (canvas.width - totalGridWidth) / 2;
+            const startY = isLaptop ? (canvas.height - totalGridHeight) / 2 : canvas.height * 0.35; // Start from ~35% down on phones (below center)
+
+            // Font settings
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Track day counter across all months
+            let dayCounter = 0;
+
+            // Draw months
+            for (let row = 0; row < numRows; row++) {
+                for (let col = 0; col < monthsPerRow; col++) {
+                    const monthIndex = row * monthsPerRow + col;
+                    if (monthIndex >= 12) break;
+
+                    const month = months[monthIndex];
+                    const monthX = startX + (col * (monthWidth + monthGapX));
+                    const monthY = startY + (row * monthGapY);
+
+                    // Draw month label
+                    ctx.font = `600 ${22 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                    ctx.fillText(month.name, monthX + monthWidth / 2, monthY);
+
+                    // Draw day dots
+                    for (let d = 0; d < month.days; d++) {
+                        dayCounter++;
+                        const dotRow = Math.floor(d / cols);
+                        const dotCol = d % cols;
+                        const x = monthX + (dotCol * (dotSize + dotGap));
+                        const y = monthY + 35 * baseScale + (dotRow * (dotSize + dotGap));
+
+                        // Determine dot style
+                        let fillColor;
+                        const isCurrentDay = (monthIndex === currentMonth && (d + 1) === currentDayOfMonth);
+
+                        if (isCurrentDay) {
+                            // Current day - orange highlight
+                            fillColor = '#ff6b35';
+                        } else if (dayCounter < currentDayOfYear) {
+                            // Past days - light/white
+                            fillColor = 'rgba(255, 255, 255, 0.85)';
+                        } else {
+                            // Future days - dark gray
+                            fillColor = 'rgba(80, 80, 85, 0.7)';
+                        }
+
+                        // Draw rounded rectangle (dot) - more rounded corners
+                        const radius = 8 * baseScale;
+                        ctx.beginPath();
+                        ctx.roundRect(x, y, dotSize, dotSize, radius);
+                        ctx.fillStyle = fillColor;
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Draw footer stats
+            const footerY = isLaptop ? canvas.height - 80 * baseScale : canvas.height - 100 * baseScale;
+            ctx.font = `600 ${26 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.fillStyle = '#ff6b35';
+            ctx.fillText(`${daysLeft}d left · ${percentComplete}%`, canvas.width / 2, footerY);
+
+            updateCurrentDateDisplay();
+        }
+
+        function downloadWallpaper() {
+            const link = document.createElement('a');
+            const phoenixDate = getPhoenixDate();
+            const dateStr = phoenixDate.toISOString().split('T')[0];
+            const device = devices[currentDevice];
+            link.download = `year-tracker-${device.name.replace(/[^a-z0-9]/gi, '-')}-${dateStr}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Handle custom background upload
+        document.getElementById('bgUpload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.onload = function () {
+                        customBackground = img;
+                        generateWallpaper();
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle color picker
+        document.getElementById('bgColor').addEventListener('input', function (e) {
+            customBackground = null;
+            bgColor = e.target.value;
+            generateWallpaper();
+        });
+
+        function resetBackground() {
+            customBackground = null;
+            bgColor = '#1a1a1a';
+            document.getElementById('bgColor').value = '#1a1a1a';
+            generateWallpaper();
+        }
+
+        // Generate on load
+        generateWallpaper();
+
+        // Update every minute to catch day changes
+        setInterval(() => {
+            generateWallpaper();
+            updateCurrentDateDisplay();
+        }, 60000);
+    </script>
+</body>
+
+</html>
