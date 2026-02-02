@@ -148,11 +148,15 @@ function generateWallpaper(deviceId = 'iphone13promax', bgColor = '#1a1a1a') {
         }
     }
 
-    // Draw footer stats
-    const footerY = isLaptop ? canvas.height - 80 * baseScale : canvas.height - 100 * baseScale;
+    // Draw footer stats - two lines
+    const footerY = isLaptop ? canvas.height - 100 * baseScale : canvas.height - 120 * baseScale;
     ctx.font = `600 ${26 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
     ctx.fillStyle = '#ff6b35';
-    ctx.fillText(`${daysLeft}d left · ${daysLeftInMonth}d in ${monthName} · ${percentComplete}%`, canvas.width / 2, footerY);
+    ctx.fillText(`${daysLeft}d left · ${percentComplete}%`, canvas.width / 2, footerY);
+
+    ctx.font = `500 ${20 * baseScale}px -apple-system, BlinkMacSystemFont, sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillText(`${daysLeftInMonth}d left in ${monthName}`, canvas.width / 2, footerY + 35 * baseScale);
 
     return canvas.toBuffer('image/png');
 }
